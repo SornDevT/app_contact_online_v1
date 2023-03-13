@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class LogPage extends StatefulWidget {
-  const LogPage({super.key});
+class LogInPage extends StatefulWidget {
+  const LogInPage({super.key});
 
   @override
-  State<LogPage> createState() => _LogPageState();
+  State<LogInPage> createState() => _LogInPageState();
 }
 
-class _LogPageState extends State<LogPage> {
+class _LogInPageState extends State<LogInPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _Phone_number = TextEditingController();
   TextEditingController _Password = TextEditingController();
