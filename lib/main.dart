@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'service/AppProvider.dart';
 
 import 'Pages/AdminHome.dart';
+import 'Pages/LodingPage.dart';
 import 'Pages/Login.dart';
+import 'Pages/MainApp.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (BuildContext context) => AppProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
+
+  //  MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider(create: (_) => Counter()),
+  //     ],
+  //     child: const MyApp(),
+  //   ),
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +39,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AdminHome(),
+      home: const LogInPage(),
     );
   }
 }

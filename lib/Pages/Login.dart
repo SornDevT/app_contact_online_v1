@@ -1,4 +1,6 @@
+import 'package:app_contacts_online/service/AppProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -104,6 +106,12 @@ class _LogInPageState extends State<LogInPage> {
                           hintText: '.....',
                         ),
                         style: TextStyle(fontSize: 20),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'ກະລຸນາປ້ອນເບີໂທ...';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(
                         height: 80,
@@ -141,6 +149,12 @@ class _LogInPageState extends State<LogInPage> {
                           hintText: '.....',
                         ),
                         style: TextStyle(fontSize: 20),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(
                         height: 80,
@@ -148,7 +162,23 @@ class _LogInPageState extends State<LogInPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // print('Form Ok');
+
+                              bool result = await Provider.of<AppProvider>(
+                                      context,
+                                      listen: false)
+                                  .LoginAuth(
+                                      _Phone_number.text, _Password.text);
+
+                              if (result) {
+                                print('Login OK!');
+                              } else {
+                                print('No login!');
+                              }
+                            }
+                          },
                           child: Text(
                             'ເຂົ້າສູ່ລະບົບ',
                             style: TextStyle(fontSize: 20),

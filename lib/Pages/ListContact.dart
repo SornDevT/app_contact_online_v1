@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'UserInfo.dart';
+
 class ListContact extends StatefulWidget {
   const ListContact({super.key});
 
@@ -191,11 +193,30 @@ class _ListContactState extends State<ListContact> {
     return ListTile(
       leading: Icon(Icons.account_balance),
       title: Text('ທ່ານ ສີສົມພອນ '),
-      subtitle: Text('ເບີໂທ: 020 112233'),
-      trailing: Icon(
-        Icons.info,
-        size: 40,
-        color: Color.fromARGB(255, 238, 43, 153),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('ເບີໂທ: 020 112233'),
+          Text(
+            'ທີ່ຢູ່: ບ້ານ, ເມືອງ, ແຂວງ',
+            style: TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
+      trailing: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserInfo(),
+            ),
+          );
+        },
+        child: Icon(
+          Icons.info,
+          size: 40,
+          color: Color.fromARGB(255, 238, 43, 153),
+        ),
       ),
     );
   }
