@@ -1,4 +1,6 @@
+import 'package:app_contacts_online/service/AppProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'UserInfo.dart';
 
@@ -36,9 +38,7 @@ class _ListContactState extends State<ListContact> {
                   PopupMenuButton<SampleItem>(
                     offset: const Offset(0, 60),
                     initialValue: selecteMenu,
-                    onSelected: (SampleItem item) {
-                      print(item);
-                    },
+                    onSelected: (value) {},
                     child: CircleAvatar(
                       maxRadius: 26,
                       backgroundImage: NetworkImage(
@@ -47,21 +47,26 @@ class _ListContactState extends State<ListContact> {
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<SampleItem>>[
                       PopupMenuItem<SampleItem>(
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.info,
-                              color: Color.fromARGB(255, 238, 43, 153),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'ເບີ່ງຂໍ້ມູນ',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 238, 43, 153)),
-                            ),
-                          ],
+                        child: InkWell(
+                          onTap: () {
+                            print('ok');
+                          },
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.info,
+                                color: Color.fromARGB(255, 238, 43, 153),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'ເບີ່ງຂໍ້ມູນ',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 238, 43, 153)),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       PopupMenuItem<SampleItem>(
@@ -83,21 +88,28 @@ class _ListContactState extends State<ListContact> {
                         ),
                       ),
                       PopupMenuItem<SampleItem>(
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Color.fromARGB(255, 238, 43, 153),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'ອອກຈາກລະບົບ',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 238, 43, 153)),
-                            ),
-                          ],
+                        child: InkWell(
+                          onTap: () {
+                            Provider.of<AppProvider>(context, listen: false)
+                                .LogOut();
+                            Navigator.of(context).pop();
+                          },
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Color.fromARGB(255, 238, 43, 153),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'ອອກຈາກລະບົບ',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 238, 43, 153)),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

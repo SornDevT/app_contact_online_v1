@@ -14,6 +14,10 @@ class _LogInPageState extends State<LogInPage> {
   TextEditingController _Phone_number = TextEditingController();
   TextEditingController _Password = TextEditingController();
 
+  bool _seepass = true;
+  bool _pressLogin = false;
+  bool _ShMg = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,13 +128,20 @@ class _LogInPageState extends State<LogInPage> {
                         height: 30,
                       ),
                       TextFormField(
-                        obscureText: true,
+                        obscureText: _seepass,
                         controller: _Password,
                         decoration: InputDecoration(
                           suffixIcon: Padding(
                             padding: EdgeInsets.all(8),
                             child: IconButton(
-                                onPressed: () {}, icon: Icon(Icons.visibility)),
+                                onPressed: () {
+                                  setState(() {
+                                    _seepass = !_seepass;
+                                  });
+                                },
+                                icon: _seepass
+                                    ? Icon(Icons.visibility)
+                                    : Icon(Icons.visibility_off)),
                           ),
                           contentPadding: const EdgeInsets.only(
                             left: 20,
@@ -156,42 +167,68 @@ class _LogInPageState extends State<LogInPage> {
                           return null;
                         },
                       ),
-                      const SizedBox(
-                        height: 80,
-                      ),
+                      _ShMg
+                          ? Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Consumer<AppProvider>(
+                                  builder: (context, auth, child) {
+                                return Text(
+                                  auth.messages_check_login.toString(),
+                                  style: TextStyle(color: Colors.red),
+                                );
+                              }),
+                            )
+                          : SizedBox(
+                              height: 80,
+                            ),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              // print('Form Ok');
-
-                              bool result = await Provider.of<AppProvider>(
-                                      context,
-                                      listen: false)
-                                  .LoginAuth(
-                                      _Phone_number.text, _Password.text);
-
-                              if (result) {
-                                print('Login OK!');
-                              } else {
-                                print('No login!');
-                              }
-                            }
-                          },
-                          child: Text(
-                            'ເຂົ້າສູ່ລະບົບ',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(15),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(50),
+                        child: _pressLogin
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                      Color.fromARGB(255, 238, 43, 153)),
                                 ),
+                              )
+                            : ElevatedButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    // print('Form Ok');
+
+                                    setState(() {
+                                      _pressLogin = true;
+                                    });
+
+                                    bool result = await Provider.of<
+                                            AppProvider>(context, listen: false)
+                                        .LoginAuth(
+                                            _Phone_number.text, _Password.text);
+
+                                    if (result) {
+                                      print('Login OK!');
+                                    } else {
+                                      setState(() {
+                                        _ShMg = true;
+                                        _pressLogin = false;
+                                      });
+                                      print(_pressLogin);
+                                      print('No login!');
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  'ເຂົ້າສູ່ລະບົບ',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.all(15),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(50),
+                                      ),
+                                    ),
+                                    primary: Color.fromARGB(255, 238, 43, 153)),
                               ),
-                              primary: Color.fromARGB(255, 238, 43, 153)),
-                        ),
                       ),
                       const SizedBox(
                         height: 100,

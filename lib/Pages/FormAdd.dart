@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../service/AppProvider.dart';
 
 class FormAdd extends StatefulWidget {
   const FormAdd({super.key});
@@ -9,6 +11,12 @@ class FormAdd extends StatefulWidget {
 
 class _FormAddState extends State<FormAdd> {
   final _formKey = GlobalKey<FormState>();
+
+  String Gender = 'male';
+  bool _seepass1 = true;
+  bool _seepass2 = true;
+  bool _chpass = false;
+  bool _pressAdd = false;
 
   TextEditingController _name = TextEditingController();
   TextEditingController _last_name = TextEditingController();
@@ -92,7 +100,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _name,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -111,6 +119,12 @@ class _FormAddState extends State<FormAdd> {
                               hintText: '.....',
                             ),
                             style: TextStyle(fontSize: 20),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'ກະລຸນາປ້ອນຊື່...';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(
                             height: 80,
@@ -123,7 +137,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _last_name,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -142,19 +156,33 @@ class _FormAddState extends State<FormAdd> {
                               hintText: '.....',
                             ),
                             style: TextStyle(fontSize: 20),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'ກະລຸນາປ້ອນນາມສະກຸນ...';
+                              }
+                              return null;
+                            },
                           ),
                           Row(
                             children: [
                               Radio(
-                                value: null,
-                                groupValue: null,
-                                onChanged: null,
+                                value: 'male',
+                                groupValue: Gender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    Gender = value!;
+                                  });
+                                },
                               ),
                               Text('ຊາຍ'),
                               Radio(
-                                value: null,
-                                groupValue: null,
-                                onChanged: null,
+                                value: 'female',
+                                groupValue: Gender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    Gender = value!;
+                                  });
+                                },
                               ),
                               Text('ຍິງ'),
                             ],
@@ -167,7 +195,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _birth_date,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -198,7 +226,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _email,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -229,7 +257,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _web,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -288,6 +316,12 @@ class _FormAddState extends State<FormAdd> {
                               hintText: '.....',
                             ),
                             style: TextStyle(fontSize: 20),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'ກະລຸນາປ້ອນເບີໂທ...';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(
                             height: 80,
@@ -300,14 +334,20 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            obscureText: true,
+                            obscureText: _seepass1,
                             controller: _password,
                             decoration: InputDecoration(
                               suffixIcon: Padding(
                                 padding: EdgeInsets.all(8),
                                 child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.visibility)),
+                                    onPressed: () {
+                                      setState(() {
+                                        _seepass1 = !_seepass1;
+                                      });
+                                    },
+                                    icon: _seepass1
+                                        ? Icon(Icons.visibility)
+                                        : Icon(Icons.visibility_off)),
                               ),
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -326,6 +366,12 @@ class _FormAddState extends State<FormAdd> {
                               hintText: '.....',
                             ),
                             style: TextStyle(fontSize: 20),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(
                             height: 80,
@@ -338,14 +384,20 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            obscureText: true,
-                            controller: _password,
+                            obscureText: _seepass2,
+                            controller: _confirm_password,
                             decoration: InputDecoration(
                               suffixIcon: Padding(
                                 padding: EdgeInsets.all(8),
                                 child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.visibility)),
+                                    onPressed: () {
+                                      setState(() {
+                                        _seepass2 = !_seepass2;
+                                      });
+                                    },
+                                    icon: _seepass2
+                                        ? Icon(Icons.visibility)
+                                        : Icon(Icons.visibility_off)),
                               ),
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -364,6 +416,12 @@ class _FormAddState extends State<FormAdd> {
                               hintText: '.....',
                             ),
                             style: TextStyle(fontSize: 20),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'ກະລຸນາປ້ອນລະຫັດຍືນຍັນ...';
+                              }
+                              return null;
+                            },
                           ),
                         ],
                       ),
@@ -407,7 +465,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _job,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -438,7 +496,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _job_type,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -500,7 +558,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _add_village,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -531,7 +589,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _add_city,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -559,7 +617,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _add_province,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -590,7 +648,7 @@ class _FormAddState extends State<FormAdd> {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: _phone_number,
+                            controller: _add_detail,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.only(
                                 left: 20,
@@ -614,25 +672,74 @@ class _FormAddState extends State<FormAdd> {
                       ),
                     ),
                   ),
+                  if (_chpass)
+                    const Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Text(
+                        'ລະຫັດຜ່ານບໍ່ກົງກັນ ກະລຸນາກວດຄືນ!',
+                        style: TextStyle(fontSize: 18, color: Colors.red),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.all(15),
                     child: SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text(
-                          'ບັນທຶກຂໍ້ມູນ',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.all(15),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(50),
+                      child: _pressAdd
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(
+                                    Color.fromARGB(255, 238, 43, 153)),
                               ),
+                            )
+                          : ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  if (_password.text ==
+                                      _confirm_password.text) {
+                                    setState(() {
+                                      _chpass = false;
+                                      _pressAdd = true;
+                                    });
+
+                                    Future<bool> result =
+                                        Provider.of<AppProvider>(context,
+                                                listen: false)
+                                            .AddUser(
+                                                _name.text,
+                                                _last_name.text,
+                                                Gender,
+                                                _phone_number.text,
+                                                _password.text,
+                                                _birth_date.text,
+                                                _add_village.text,
+                                                _add_city.text,
+                                                _add_province.text,
+                                                _add_detail.text,
+                                                _email.text,
+                                                _web.text,
+                                                _job.text,
+                                                _job_type.text);
+                                  } else {
+                                    setState(() {
+                                      _chpass = true;
+                                      _pressAdd = false;
+                                    });
+                                  }
+                                }
+                              },
+                              child: Text(
+                                'ບັນທຶກຂໍ້ມູນ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(15),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(50),
+                                    ),
+                                  ),
+                                  primary: Color.fromARGB(255, 238, 43, 153)),
                             ),
-                            primary: Color.fromARGB(255, 238, 43, 153)),
-                      ),
                     ),
                   ),
                 ],
