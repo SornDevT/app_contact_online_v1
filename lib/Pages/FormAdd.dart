@@ -692,7 +692,7 @@ class _FormAddState extends State<FormAdd> {
                               ),
                             )
                           : ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   if (_password.text ==
                                       _confirm_password.text) {
@@ -701,8 +701,8 @@ class _FormAddState extends State<FormAdd> {
                                       _pressAdd = true;
                                     });
 
-                                    Future<bool> result =
-                                        Provider.of<AppProvider>(context,
+                                    bool result =
+                                        await Provider.of<AppProvider>(context,
                                                 listen: false)
                                             .AddUser(
                                                 _name.text,
@@ -719,6 +719,23 @@ class _FormAddState extends State<FormAdd> {
                                                 _web.text,
                                                 _job.text,
                                                 _job_type.text);
+
+                                    var text_mg = Provider.of<AppProvider>(
+                                            context,
+                                            listen: false)
+                                        .loginMessage;
+
+                                    if (result) {
+                                      setState(() {
+                                        _pressAdd = false;
+                                        Snackbar(text_mg.toString());
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _pressAdd = false;
+                                        Snackbar(text_mg.toString());
+                                      });
+                                    }
                                   } else {
                                     setState(() {
                                       _chpass = true;
@@ -750,5 +767,11 @@ class _FormAddState extends State<FormAdd> {
         // ),
       ),
     );
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> Snackbar(
+      String _mg) {
+    return ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(_mg)));
   }
 }

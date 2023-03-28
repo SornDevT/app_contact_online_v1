@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../service/AppProvider.dart';
+import '../model/User.dart';
 
 class UserInfo extends StatefulWidget {
-  const UserInfo({super.key});
+  const UserInfo({Key? key, required this.UserID}) : super(key: key);
+  final int UserID;
 
   @override
   State<UserInfo> createState() => _UserInfoState();
@@ -17,7 +21,16 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    GetUserData();
     _tabController = TabController(length: 3, vsync: this);
+  }
+
+  late User UserData;
+
+  void GetUserData() {
+    List<User> listUser =
+        Provider.of<AppProvider>(context, listen: false).ListUser;
+    UserData = listUser.firstWhere((i) => i.id == widget.UserID);
   }
 
   @override
@@ -115,7 +128,7 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'ສະຖານະ: Admin',
+                              'ສະຖານະ: ${UserData.user_type}',
                               style: TextStyle(
                                   fontSize: 16,
                                   color: Color.fromARGB(255, 238, 43, 153)),
@@ -126,18 +139,24 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           height: 20,
                         ),
                         Row(children: [
-                          Text(
-                            'ທ່ານ ສີສົມພອນ ໄຊຍະສິນ',
-                            style:
-                                TextStyle(fontSize: 20, color: Colors.black54),
-                          ),
+                          UserData.gender == 'male'
+                              ? Text(
+                                  'ທ່ານ ${UserData.name} ${UserData.last_name}',
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.black54),
+                                )
+                              : Text(
+                                  'ທ່ານ ນ ${UserData.name} ${UserData.last_name}',
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.black54),
+                                )
                         ]),
                         const SizedBox(
                           height: 10,
                         ),
                         Row(children: [
                           Text(
-                            'ວັນເດືອນປີເກີດ: 12/12/1990',
+                            'ວັນເດືອນປີເກີດ: ${UserData.birth_day}',
                             style:
                                 TextStyle(fontSize: 16, color: Colors.black54),
                           ),
@@ -189,36 +208,19 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'ບ້ານ: ',
+                              'ບ້ານ: ${UserData.add_village}',
                               style: TextStyle(fontSize: 16),
                             ),
                             Text(
-                              'ເມືອງ: ',
+                              'ເມືອງ: ${UserData.add_city}',
                               style: TextStyle(fontSize: 16),
                             ),
                             Text(
-                              'ແຂວງ: ',
+                              'ແຂວງ: ${UserData.add_province}',
                               style: TextStyle(fontSize: 16),
                             ),
                             Text(
-                              'ລາຍລະອຽດເພີ່ມເຕີມ: ',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ເບີໂທ: +856',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              'ອີເມວລ໌: ',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Text(
-                              'ເວັບໄຊທ໌: ',
+                              'ລາຍລະອຽດເພີ່ມເຕີມ: ${UserData.add_detail}',
                               style: TextStyle(fontSize: 16),
                             ),
                           ],
@@ -227,11 +229,28 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'ອາຊີບ: ',
+                              'ເບີໂທ: +856 ${UserData.tel}',
                               style: TextStyle(fontSize: 16),
                             ),
                             Text(
-                              'ຕຳແໜ່ງ: ',
+                              'ອີເມວລ໌: ${UserData.email}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              'ເວັບໄຊທ໌: ${UserData.web}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ອາຊີບ: ${UserData.job}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              'ຕຳແໜ່ງ: ${UserData.job_type}',
                               style: TextStyle(fontSize: 16),
                             ),
                           ],

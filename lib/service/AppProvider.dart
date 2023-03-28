@@ -8,6 +8,22 @@ class AppProvider extends ChangeNotifier {
   bool isLoggin = false;
   bool ChLoggined = true;
   late String messages_check_login;
+  late String loginMessage;
+
+  // ກຳນົດໜ້າ listcontact ແລະ Form
+  int AdminPage = 0;
+  void SetAdminPage(int index) {
+    AdminPage = index;
+    notifyListeners();
+  }
+
+  List<User> ListUser = [];
+
+  void AddListUser(User _user) {
+    ListUser.add(_user);
+    // print(_user);
+    notifyListeners();
+  }
 
   void CheckLoggin({required String token}) async {
     ChLoggined = false;
@@ -74,18 +90,68 @@ class AppProvider extends ChangeNotifier {
     var NewToken = Token1.replaceAll('\r', '');
 
     final response = await dio().post('/register',
+        data: DataAddUser,
         options: Options(headers: {
           "Content-Type": "application/json; charset=utf-8",
           "Authorization": "Bearer $NewToken",
         }, validateStatus: ((status) => true)));
 
-    print(response.statusCode);
+    print(response.data['success']);
 
     if (response.statusCode == 200) {
-      return true;
+      if (response.data['success']) {
+        loginMessage = response.data['message'];
+        AdminPage = 0;
+        notifyListeners();
+        return true;
+      } else {
+        loginMessage = response.data['message'];
+        notifyListeners();
+        return false;
+      }
     }
 
     return false;
+  }
+
+  void GetAllUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    var Token1 = token!.replaceAll('\n', '');
+    var NewToken = Token1.replaceAll('\r', '');
+
+    final response = await dio().get('/get_all_user',
+        options: Options(headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Authorization": "Bearer $NewToken",
+        }, validateStatus: ((status) => true)));
+
+    // print(response.data);
+    if (response.statusCode == 200) {
+      ListUser = [];
+      Map<String, dynamic> dcode = response.data;
+      for (var item in dcode['user']) {
+        User _listUser = User(
+            id: item['id'],
+            name: item['name'].toString(),
+            last_name: item['last_name'].toString(),
+            gender: item['gender'].toString(),
+            image: item['image'].toString(),
+            tel: item['tel'].toString(),
+            password: '',
+            birth_day: item['birth_day'].toString(),
+            add_village: item['add_village'].toString(),
+            add_city: item['add_city'].toString(),
+            add_province: item['add_province'].toString(),
+            add_detail: item['add_detail'].toString(),
+            email: item['email'].toString(),
+            web: item['web'].toString(),
+            job: item['job'].toString(),
+            job_type: item['job_type'].toString(),
+            user_type: item['user_type'].toString());
+        AddListUser(_listUser);
+      }
+    }
   }
 
   Future<bool> LoginAuth(Tel, Password) async {

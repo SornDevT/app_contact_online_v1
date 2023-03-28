@@ -17,202 +17,215 @@ class _ListContactState extends State<ListContact> {
   SampleItem? selecteMenu;
 
   @override
+  void initState() {
+    super.initState();
+    GetAllUser();
+  }
+
+  void GetAllUser() async {
+    Provider.of<AppProvider>(context, listen: false).GetAllUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'ລະບົບສະມາຊິກ ອອນໄລທ໌',
-                      style: TextStyle(
-                          fontSize: 25,
-                          color: Color.fromARGB(255, 238, 43, 153)),
+    return Consumer<AppProvider>(builder: (context, Auth, child) {
+      return Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ລະບົບສະມາຊິກ ອອນໄລທ໌',
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Color.fromARGB(255, 238, 43, 153)),
+                      ),
                     ),
-                  ),
-                  PopupMenuButton<SampleItem>(
-                    offset: const Offset(0, 60),
-                    initialValue: selecteMenu,
-                    onSelected: (value) {},
-                    child: CircleAvatar(
-                      maxRadius: 26,
-                      backgroundImage: NetworkImage(
-                          'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
-                    ),
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<SampleItem>>[
-                      PopupMenuItem<SampleItem>(
-                        child: InkWell(
-                          onTap: () {
-                            print('ok');
-                          },
+                    PopupMenuButton<SampleItem>(
+                      offset: const Offset(0, 60),
+                      initialValue: selecteMenu,
+                      onSelected: (value) {},
+                      child: CircleAvatar(
+                        maxRadius: 26,
+                        backgroundImage: NetworkImage(
+                            'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
+                      ),
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<SampleItem>>[
+                        PopupMenuItem<SampleItem>(
+                          child: InkWell(
+                            onTap: () {
+                              print('ok');
+                            },
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.info,
+                                  color: Color.fromARGB(255, 238, 43, 153),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'ເບີ່ງຂໍ້ມູນ',
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 238, 43, 153)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        PopupMenuItem<SampleItem>(
                           child: Row(
                             children: const [
                               Icon(
-                                Icons.info,
+                                Icons.edit,
                                 color: Color.fromARGB(255, 238, 43, 153),
                               ),
                               SizedBox(
                                 width: 10,
                               ),
                               Text(
-                                'ເບີ່ງຂໍ້ມູນ',
+                                'ແກ້ໄຂ',
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 238, 43, 153)),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      PopupMenuItem<SampleItem>(
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.edit,
-                              color: Color.fromARGB(255, 238, 43, 153),
+                        PopupMenuItem<SampleItem>(
+                          child: InkWell(
+                            onTap: () {
+                              Provider.of<AppProvider>(context, listen: false)
+                                  .LogOut();
+                              Navigator.of(context).pop();
+                            },
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: Color.fromARGB(255, 238, 43, 153),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'ອອກຈາກລະບົບ',
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 238, 43, 153)),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'ແກ້ໄຂ',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 238, 43, 153)),
-                            ),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem<SampleItem>(
-                        child: InkWell(
-                          onTap: () {
-                            Provider.of<AppProvider>(context, listen: false)
-                                .LogOut();
-                            Navigator.of(context).pop();
-                          },
-                          child: Row(
-                            children: const [
-                              Icon(
-                                Icons.arrow_forward,
-                                color: Color.fromARGB(255, 238, 43, 153),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                'ອອກຈາກລະບົບ',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 238, 43, 153)),
-                              ),
-                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: TextField(
-                decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: const Padding(
-                      padding: EdgeInsets.only(
-                        left: 20,
-                        top: 10,
-                        bottom: 10,
-                        right: 0,
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: TextField(
+                  decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 10,
+                          bottom: 10,
+                          right: 0,
+                        ),
+                        child: Icon(
+                          Icons.search,
+                          size: 35,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.search,
-                        size: 35,
+                      contentPadding: const EdgeInsets.only(
+                        left: 0,
+                        top: 20,
+                        bottom: 20,
+                        right: 20,
                       ),
-                    ),
-                    contentPadding: const EdgeInsets.only(
-                      left: 0,
-                      top: 20,
-                      bottom: 20,
-                      right: 20,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(
-                        width: 1,
-                        color: Colors.grey,
-                        style: BorderStyle.none,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                          width: 1,
+                          color: Colors.grey,
+                          style: BorderStyle.none,
+                        ),
                       ),
-                    ),
-                    hintText: 'ຄົ້ນຫາຂໍ້ມູນ...'),
+                      hintText: 'ຄົ້ນຫາຂໍ້ມູນ...'),
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'ລາຍການ ສະມາຊິກ',
-                      style: TextStyle(
-                          fontSize: 25,
-                          color: Color.fromARGB(255, 238, 43, 153)),
+              Padding(
+                padding: EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ລາຍການ ສະມາຊິກ',
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Color.fromARGB(255, 238, 43, 153)),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.refresh,
-                      color: Color.fromARGB(255, 238, 43, 153),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<AppProvider>(context, listen: false)
+                            .GetAllUser();
+                      },
+                      icon: Icon(
+                        Icons.refresh,
+                        color: Color.fromARGB(255, 238, 43, 153),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Expanded(
+              // Padding(
+              //   padding: EdgeInsets.all(12),
+              //   child:
+              Expanded(
                 child: Container(
-                  height: 400,
-                  child: ListView(
-                    children: [
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                      ListContact(),
-                    ],
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(right: 15, left: 15, bottom: 10),
+                    itemCount: Auth.ListUser.length,
+                    itemBuilder: (context, index) {
+                      return ListContact(
+                        Auth.ListUser[index].name,
+                        Auth.ListUser[index].tel,
+                        Auth.ListUser[index].id,
+                      );
+                    },
                   ),
                 ),
               ),
-            )
-          ],
+              // )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget ListContact() {
+  Widget ListContact(String title, String subtext, int UserID) {
     return ListTile(
       leading: Icon(Icons.account_balance),
-      title: Text('ທ່ານ ສີສົມພອນ '),
+      title: Text(title),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('ເບີໂທ: 020 112233'),
-          Text(
-            'ທີ່ຢູ່: ບ້ານ, ເມືອງ, ແຂວງ',
-            style: TextStyle(fontSize: 12),
-          ),
+          Text(subtext),
+          // Text(
+          //   'ທີ່ຢູ່: ບ້ານ, ເມືອງ, ແຂວງ',
+          //   style: TextStyle(fontSize: 12),
+          // ),
         ],
       ),
       trailing: InkWell(
@@ -220,7 +233,9 @@ class _ListContactState extends State<ListContact> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UserInfo(),
+              builder: (context) => UserInfo(
+                UserID: UserID,
+              ),
             ),
           );
         },
