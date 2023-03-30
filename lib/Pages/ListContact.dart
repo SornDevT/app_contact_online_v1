@@ -60,7 +60,15 @@ class _ListContactState extends State<ListContact> {
                         PopupMenuItem<SampleItem>(
                           child: InkWell(
                             onTap: () {
-                              print('ok');
+                              // print('ok');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserInfo(
+                                    UserID: Auth.user_login.id,
+                                  ),
+                                ),
+                              );
                             },
                             child: Row(
                               children: const [
@@ -131,6 +139,10 @@ class _ListContactState extends State<ListContact> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextField(
+                  onChanged: (value) {
+                    Provider.of<AppProvider>(context, listen: false)
+                        .SearchContact(value);
+                  },
                   decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -195,12 +207,12 @@ class _ListContactState extends State<ListContact> {
                 child: Container(
                   child: ListView.builder(
                     padding: EdgeInsets.only(right: 15, left: 15, bottom: 10),
-                    itemCount: Auth.ListUser.length,
+                    itemCount: Auth.ListUserSearch.length,
                     itemBuilder: (context, index) {
                       return ListContact(
-                        Auth.ListUser[index].name,
-                        Auth.ListUser[index].tel,
-                        Auth.ListUser[index].id,
+                        Auth.ListUserSearch[index].name,
+                        Auth.ListUserSearch[index].tel,
+                        Auth.ListUserSearch[index].id,
                       );
                     },
                   ),

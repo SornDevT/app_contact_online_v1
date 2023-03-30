@@ -1,3 +1,4 @@
+import 'package:app_contacts_online/Pages/FormAdd.dart';
 import 'package:app_contacts_online/service/AppProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -237,7 +238,12 @@ class _LogInPageState extends State<LogInPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => FormAdd(
+                                        UserID: 0,
+                                      )));
+                            },
                             child: const Text(
                               'ບໍ່ມີບັນຊີ, ລົງທະບຽນ',
                               style:

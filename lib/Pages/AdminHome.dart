@@ -13,7 +13,12 @@ class AdminHome extends StatefulWidget {
 }
 
 class _AdminHomeState extends State<AdminHome> {
-  static const List<Widget> _widgetOption = <Widget>[ListContact(), FormAdd()];
+  static const List<Widget> _widgetOption = <Widget>[
+    ListContact(),
+    FormAdd(
+      UserID: 0,
+    )
+  ];
 
   // int Index = 0;
 

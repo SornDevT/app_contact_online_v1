@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../model/User.dart';
 import '../service/AppProvider.dart';
 
 class FormAdd extends StatefulWidget {
-  const FormAdd({super.key});
+  const FormAdd({Key? key, required this.UserID}) : super(key: key);
+
+  final int UserID;
 
   @override
   State<FormAdd> createState() => _FormAddState();
@@ -12,6 +15,7 @@ class FormAdd extends StatefulWidget {
 class _FormAddState extends State<FormAdd> {
   final _formKey = GlobalKey<FormState>();
 
+  late User UserData;
   String Gender = 'male';
   bool _seepass1 = true;
   bool _seepass2 = true;
@@ -32,6 +36,36 @@ class _FormAddState extends State<FormAdd> {
   TextEditingController _add_province = TextEditingController();
   TextEditingController _add_detail = TextEditingController();
   TextEditingController _web = TextEditingController();
+
+  void GetUserData() {
+    List<User> listUser =
+        Provider.of<AppProvider>(context, listen: false).ListUser;
+    UserData = listUser.firstWhere((i) => i.id == widget.UserID);
+
+    setState(() {
+      _name.text = UserData.name;
+      _last_name.text = UserData.last_name;
+      Gender = UserData.gender;
+      _birth_date.text = UserData.birth_day;
+      _phone_number.text = UserData.tel;
+      _email.text = UserData.email;
+      _add_village.text = UserData.add_village;
+      _add_city.text = UserData.add_city;
+      _add_province.text = UserData.add_province;
+      _add_detail.text = UserData.add_detail;
+      _web.text = UserData.web;
+      _job.text = UserData.job;
+      _job_type.text = UserData.job_type;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.UserID != 0) {
+      GetUserData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -367,8 +401,10 @@ class _FormAddState extends State<FormAdd> {
                             ),
                             style: TextStyle(fontSize: 20),
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
+                              if (widget.UserID == 0) {
+                                if (value == null || value.isEmpty) {
+                                  return 'ກະລຸນາປ້ອນລະຫັດຜ່ານ...';
+                                }
                               }
                               return null;
                             },
@@ -417,8 +453,10 @@ class _FormAddState extends State<FormAdd> {
                             ),
                             style: TextStyle(fontSize: 20),
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'ກະລຸນາປ້ອນລະຫັດຍືນຍັນ...';
+                              if (widget.UserID == 0) {
+                                if (value == null || value.isEmpty) {
+                                  return 'ກະລຸນາປ້ອນລະຫັດຍືນຍັນ...';
+                                }
                               }
                               return null;
                             },
@@ -694,60 +732,156 @@ class _FormAddState extends State<FormAdd> {
                           : ElevatedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  if (_password.text ==
-                                      _confirm_password.text) {
-                                    setState(() {
-                                      _chpass = false;
-                                      _pressAdd = true;
-                                    });
-
-                                    bool result =
-                                        await Provider.of<AppProvider>(context,
-                                                listen: false)
-                                            .AddUser(
-                                                _name.text,
-                                                _last_name.text,
-                                                Gender,
-                                                _phone_number.text,
-                                                _password.text,
-                                                _birth_date.text,
-                                                _add_village.text,
-                                                _add_city.text,
-                                                _add_province.text,
-                                                _add_detail.text,
-                                                _email.text,
-                                                _web.text,
-                                                _job.text,
-                                                _job_type.text);
-
-                                    var text_mg = Provider.of<AppProvider>(
-                                            context,
-                                            listen: false)
-                                        .loginMessage;
-
-                                    if (result) {
+                                  if (widget.UserID == 0) {
+                                    // ການເພີ່ມຂໍ້ມູນໃໝ່ --------------------
+                                    if (_password.text ==
+                                        _confirm_password.text) {
                                       setState(() {
-                                        _pressAdd = false;
-                                        Snackbar(text_mg.toString());
+                                        _chpass = false;
+                                        _pressAdd = true;
                                       });
+
+                                      bool result =
+                                          await Provider.of<AppProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .AddUser(
+                                                  _name.text,
+                                                  _last_name.text,
+                                                  Gender,
+                                                  _phone_number.text,
+                                                  _password.text,
+                                                  _birth_date.text,
+                                                  _add_village.text,
+                                                  _add_city.text,
+                                                  _add_province.text,
+                                                  _add_detail.text,
+                                                  _email.text,
+                                                  _web.text,
+                                                  _job.text,
+                                                  _job_type.text);
+
+                                      var text_mg = Provider.of<AppProvider>(
+                                              context,
+                                              listen: false)
+                                          .loginMessage;
+
+                                      if (result) {
+                                        setState(() {
+                                          _pressAdd = false;
+                                          Snackbar(text_mg.toString());
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _pressAdd = false;
+                                          Snackbar(text_mg.toString());
+                                        });
+                                      }
                                     } else {
                                       setState(() {
+                                        _chpass = true;
                                         _pressAdd = false;
-                                        Snackbar(text_mg.toString());
                                       });
                                     }
+                                    // ຈົບການເພີ່ມຂໍ້ມູນ ------------------
                                   } else {
-                                    setState(() {
-                                      _chpass = true;
-                                      _pressAdd = false;
-                                    });
+                                    // ອັບເດດຂໍ້ມູນ ----------------------
+
+                                    if (_password.text == '') {
+                                      // ອັບເດດຂໍ້ມູນ
+                                      print('press update');
+                                      bool result =
+                                          await Provider.of<AppProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .UpdateUserEdit(
+                                                  widget.UserID,
+                                                  _name.text,
+                                                  _last_name.text,
+                                                  Gender,
+                                                  _phone_number.text,
+                                                  _password.text,
+                                                  _birth_date.text,
+                                                  _add_village.text,
+                                                  _add_city.text,
+                                                  _add_province.text,
+                                                  _add_detail.text,
+                                                  _email.text,
+                                                  _web.text,
+                                                  _job.text,
+                                                  _job_type.text);
+
+                                      if (result) {
+                                        setState(() {
+                                          _pressAdd = false;
+                                        });
+                                        Snackbar('ອັບເດດຂໍ້ມູນສຳເລັດ!');
+                                        // Pop ອອກໄປໜ້າທຳອິດ
+                                        Navigator.of(context)
+                                            .popUntil((route) => route.isFirst);
+                                      } else {
+                                        Snackbar(
+                                            'ຜິດຜາດ, ອັບເດດຂໍ້ມູນບໍ່ສຳເລັດ!');
+                                      }
+                                    } else {
+                                      // ອັບເດດຂໍ້ມູນ ພ້ອມລະຫັດຜ່ານ
+
+                                      if (_password.text ==
+                                          _confirm_password.text) {
+                                        setState(() {
+                                          _chpass = false;
+                                          _pressAdd = false;
+                                        });
+
+                                        bool result =
+                                            await Provider.of<AppProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .UpdateUserEdit(
+                                                    widget.UserID,
+                                                    _name.text,
+                                                    _last_name.text,
+                                                    Gender,
+                                                    _phone_number.text,
+                                                    _password.text,
+                                                    _birth_date.text,
+                                                    _add_village.text,
+                                                    _add_city.text,
+                                                    _add_province.text,
+                                                    _add_detail.text,
+                                                    _email.text,
+                                                    _web.text,
+                                                    _job.text,
+                                                    _job_type.text);
+
+                                        if (result) {
+                                          setState(() {
+                                            _pressAdd = false;
+                                          });
+                                          Snackbar('ອັບເດດຂໍ້ມູນສຳເລັດ!');
+                                          // Pop ອອກໄປໜ້າທຳອິດ
+                                          Navigator.of(context).popUntil(
+                                              (route) => route.isFirst);
+                                        } else {
+                                          Snackbar(
+                                              'ຜິດຜາດ, ອັບເດດຂໍ້ມູນບໍ່ສຳເລັດ!');
+                                        }
+                                      }
+                                    }
+
+                                    // ຈົບການອັບເດດ ----------------
                                   }
                                 }
                               },
-                              child: Text(
-                                'ບັນທຶກຂໍ້ມູນ',
-                                style: TextStyle(fontSize: 20),
-                              ),
+                              child: widget.UserID == 0
+                                  ? Text(
+                                      'ບັນທຶກຂໍ້ມູນ',
+                                      style: TextStyle(fontSize: 20),
+                                    )
+                                  : Text(
+                                      'ອັບເດດຂໍ້ມູນ',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
                               style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.all(15),
                                   shape: const RoundedRectangleBorder(

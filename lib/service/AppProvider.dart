@@ -10,6 +10,8 @@ class AppProvider extends ChangeNotifier {
   late String messages_check_login;
   late String loginMessage;
 
+  late User user_login;
+
   // ກຳນົດໜ້າ listcontact ແລະ Form
   int AdminPage = 0;
   void SetAdminPage(int index) {
@@ -18,6 +20,7 @@ class AppProvider extends ChangeNotifier {
   }
 
   List<User> ListUser = [];
+  List<User> ListUserSearch = [];
 
   void AddListUser(User _user) {
     ListUser.add(_user);
@@ -41,6 +44,12 @@ class AppProvider extends ChangeNotifier {
         }, validateStatus: ((status) => true)));
 
     if (Response.statusCode == 200) {
+      //print(Response.data);
+
+      Map<String, dynamic> decode = Response.data;
+      // print(decode['user']);
+      this.user_login = User.fromJson(decode['user']);
+
       isLoggin = true;
       ChLoggined = true;
       notifyListeners();
@@ -84,19 +93,23 @@ class AppProvider extends ChangeNotifier {
       'job_type': job_type,
     });
 
-    final prefs = await SharedPreferences.getInstance();
-    String? token = await prefs.getString('token');
-    var Token1 = token!.replaceAll('\n', '');
-    var NewToken = Token1.replaceAll('\r', '');
+    // final prefs = await SharedPreferences.getInstance();
+    // String? token = await prefs.getString('token');
+    // var Token1 = token!.replaceAll('\n', '');
+    // var NewToken = Token1.replaceAll('\r', '');
+
+    // final response = await dio().post('/register',
+    //     data: DataAddUser,
+    //     options: Options(headers: {
+    //       "Content-Type": "application/json; charset=utf-8",
+    //       "Authorization": "Bearer $NewToken",
+    //     }, validateStatus: ((status) => true)));
 
     final response = await dio().post('/register',
         data: DataAddUser,
-        options: Options(headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Authorization": "Bearer $NewToken",
-        }, validateStatus: ((status) => true)));
+        options: Options(validateStatus: ((status) => true)));
 
-    print(response.data['success']);
+    print(response.data);
 
     if (response.statusCode == 200) {
       if (response.data['success']) {
@@ -109,6 +122,64 @@ class AppProvider extends ChangeNotifier {
         notifyListeners();
         return false;
       }
+    }
+
+    return false;
+  }
+
+  Future<bool> UpdateUserEdit(
+    int UserID,
+    String name,
+    String last_name,
+    String gender,
+    String tel,
+    String password,
+    String birth_day,
+    String add_village,
+    String add_city,
+    String add_province,
+    String add_detail,
+    String email,
+    String web,
+    String job,
+    String job_type,
+  ) async {
+    FormData DataUpdateUser = FormData.fromMap({
+      'name': name,
+      'last_name': last_name,
+      'gender': gender,
+      'tel': tel,
+      'password': password,
+      'birth_day': birth_day,
+      'add_village': add_village,
+      'add_city': add_city,
+      'add_province': add_province,
+      'add_detail': add_detail,
+      'email': email,
+      'web': web,
+      'job': job,
+      'job_type': job_type,
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    var Token1 = token!.replaceAll('\n', '');
+    var NewToken = Token1.replaceAll('\r', '');
+
+    final response = await dio().post('/update_user/${UserID}',
+        data: DataUpdateUser,
+        options: Options(headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Authorization": "Bearer $NewToken",
+        }, validateStatus: ((status) => true)));
+    // ອັບເດດຂໍ້ມູນ ຜູ້ໃຊ້ Login
+    CheckLoggin(token: token);
+
+    if (response.statusCode == 200) {
+      SetAdminPage(0);
+      GetAllUser();
+      notifyListeners();
+      return true;
     }
 
     return false;
@@ -151,6 +222,25 @@ class AppProvider extends ChangeNotifier {
             user_type: item['user_type'].toString());
         AddListUser(_listUser);
       }
+
+      ListUserSearch = ListUser;
+      notifyListeners();
+    }
+  }
+
+  void SearchContact(String value) {
+    List<User> Search = [];
+    if (value.isNotEmpty) {
+      final Sc = ListUser.where((item) {
+        final name = item.name.toLowerCase();
+        final input = value.toLowerCase();
+        return name.contains(input);
+      }).toList();
+      ListUserSearch = Sc;
+      notifyListeners();
+    } else {
+      ListUserSearch = ListUser;
+      notifyListeners();
     }
   }
 
@@ -172,7 +262,8 @@ class AppProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       String token = response.data.toString();
       await saveToken(token);
-
+      GetAllUser();
+      CheckLoggin(token: token);
       // ກຳນົດໃຫ້ເຂົ້າສູ່ລະບົບ
       isLoggin = true;
       notifyListeners();

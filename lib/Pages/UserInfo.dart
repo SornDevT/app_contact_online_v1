@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../service/AppProvider.dart';
 import '../model/User.dart';
+import 'FormAdd.dart';
 
 class UserInfo extends StatefulWidget {
   const UserInfo({Key? key, required this.UserID}) : super(key: key);
@@ -69,21 +70,31 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<SampleItem>>[
                 PopupMenuItem<SampleItem>(
-                  child: Row(
-                    children: const [
-                      Icon(
-                        Icons.edit,
-                        color: Color.fromARGB(255, 238, 43, 153),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'ແກ້ໄຂ',
-                        style:
-                            TextStyle(color: Color.fromARGB(255, 238, 43, 153)),
-                      ),
-                    ],
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FormAdd(
+                                    UserID: UserData.id,
+                                  )));
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.edit,
+                          color: Color.fromARGB(255, 238, 43, 153),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'ແກ້ໄຂ',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 238, 43, 153)),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 PopupMenuItem<SampleItem>(
