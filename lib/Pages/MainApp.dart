@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'Login.dart';
 import 'AdminHome.dart';
 import 'LodingPage.dart';
+import 'UserInfo.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -36,7 +37,12 @@ class _MainAppState extends State<MainApp> {
         builder: (context, auth, child) {
           if (auth.ChLoggined) {
             if (auth.isLoggin) {
-              return AdminHome();
+              if (auth.user_login.user_type == 'admin') {
+                return AdminHome();
+              } else {
+                // print(auth.user_login.id);
+                return UserInfo(UserID: auth.user_login.id);
+              }
             } else {
               return LogInPage();
             }

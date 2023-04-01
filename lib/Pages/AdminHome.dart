@@ -17,6 +17,7 @@ class _AdminHomeState extends State<AdminHome> {
     ListContact(),
     FormAdd(
       UserID: 0,
+      reg: false,
     )
   ];
 

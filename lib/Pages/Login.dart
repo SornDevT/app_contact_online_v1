@@ -242,6 +242,7 @@ class _LogInPageState extends State<LogInPage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => FormAdd(
                                         UserID: 0,
+                                        reg: true,
                                       )));
                             },
                             child: const Text(

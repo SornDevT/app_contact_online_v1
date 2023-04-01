@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../model/User.dart';
 import '../service/AppProvider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FormAdd extends StatefulWidget {
-  const FormAdd({Key? key, required this.UserID}) : super(key: key);
+  const FormAdd({Key? key, required this.UserID, required this.reg})
+      : super(key: key);
 
   final int UserID;
+  final bool reg;
 
   @override
   State<FormAdd> createState() => _FormAddState();
@@ -36,6 +42,22 @@ class _FormAddState extends State<FormAdd> {
   TextEditingController _add_province = TextEditingController();
   TextEditingController _add_detail = TextEditingController();
   TextEditingController _web = TextEditingController();
+
+  // ອັບໂຫລດຮູບພາບ
+
+  String? imageFilePath;
+  File? imageFile;
+
+  void getImage() async {
+    final picker = ImagePicker();
+    var _pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (_pickedFile != null) {
+      setState(() {
+        imageFilePath = _pickedFile.path;
+        imageFile = File(_pickedFile.path);
+      });
+    }
+  }
 
   void GetUserData() {
     List<User> listUser =
@@ -85,13 +107,30 @@ class _FormAddState extends State<FormAdd> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        maxRadius: 65,
-                      ),
-                    ],
+                  InkWell(
+                    onTap: () {
+                      getImage();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        imageFilePath == null
+                            ? CircleAvatar(
+                                child: Icon(
+                                  Icons.account_circle,
+                                  size: 120,
+                                  color: Colors.white,
+                                ),
+                                maxRadius: 65,
+                                backgroundColor:
+                                    Color.fromARGB(255, 238, 43, 153),
+                              )
+                            : CircleAvatar(
+                                backgroundImage: FileImage(imageFile!),
+                                maxRadius: 65,
+                              )
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: 30,
@@ -248,6 +287,19 @@ class _FormAddState extends State<FormAdd> {
                               hintText: '.....',
                             ),
                             style: TextStyle(fontSize: 20),
+                            onTap: () async {
+                              DateTime? pickesate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime(2102));
+                              if (pickesate != null) {
+                                setState(() {
+                                  _birth_date.text = DateFormat('dd/MM/yyyy')
+                                      .format(pickesate);
+                                });
+                              }
+                            },
                           ),
                           const SizedBox(
                             height: 80,
@@ -759,7 +811,8 @@ class _FormAddState extends State<FormAdd> {
                                                   _email.text,
                                                   _web.text,
                                                   _job.text,
-                                                  _job_type.text);
+                                                  _job_type.text,
+                                                  imageFile);
 
                                       var text_mg = Provider.of<AppProvider>(
                                               context,
@@ -767,6 +820,10 @@ class _FormAddState extends State<FormAdd> {
                                           .loginMessage;
 
                                       if (result) {
+                                        print(widget.reg);
+                                        if (widget.reg) {
+                                          Navigator.of(context).pop();
+                                        }
                                         setState(() {
                                           _pressAdd = false;
                                           Snackbar(text_mg.toString());
@@ -809,7 +866,8 @@ class _FormAddState extends State<FormAdd> {
                                                   _email.text,
                                                   _web.text,
                                                   _job.text,
-                                                  _job_type.text);
+                                                  _job_type.text,
+                                                  imageFile);
 
                                       if (result) {
                                         setState(() {
@@ -852,7 +910,8 @@ class _FormAddState extends State<FormAdd> {
                                                     _email.text,
                                                     _web.text,
                                                     _job.text,
-                                                    _job_type.text);
+                                                    _job_type.text,
+                                                    imageFile);
 
                                         if (result) {
                                           setState(() {

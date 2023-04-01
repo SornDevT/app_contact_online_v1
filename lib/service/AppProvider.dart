@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../model/User.dart';
 import 'Dio.dart';
@@ -31,7 +33,6 @@ class AppProvider extends ChangeNotifier {
   void CheckLoggin({required String token}) async {
     ChLoggined = false;
     notifyListeners();
-
     print(token);
 
     var Token1 = token.replaceAll('\n', '');
@@ -50,8 +51,10 @@ class AppProvider extends ChangeNotifier {
       // print(decode['user']);
       this.user_login = User.fromJson(decode['user']);
 
-      isLoggin = true;
-      ChLoggined = true;
+      print(user_login.user_type);
+
+      //ດຶງຂໍ້ມູນ
+      GetAllUser();
       notifyListeners();
     } else {
       isLoggin = false;
@@ -61,37 +64,103 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<bool> AddUser(
-    String name,
-    String last_name,
-    String gender,
-    String tel,
-    String password,
-    String birth_day,
-    String add_village,
-    String add_city,
-    String add_province,
-    String add_detail,
-    String email,
-    String web,
-    String job,
-    String job_type,
-  ) async {
-    FormData DataAddUser = FormData.fromMap({
-      'name': name,
-      'last_name': last_name,
-      'gender': gender,
-      'tel': tel,
-      'password': password,
-      'birth_day': birth_day,
-      'add_village': add_village,
-      'add_city': add_city,
-      'add_province': add_province,
-      'add_detail': add_detail,
-      'email': email,
-      'web': web,
-      'job': job,
-      'job_type': job_type,
-    });
+      String name,
+      String last_name,
+      String gender,
+      String tel,
+      String password,
+      String birth_day,
+      String add_village,
+      String add_city,
+      String add_province,
+      String add_detail,
+      String email,
+      String web,
+      String job,
+      String job_type,
+      File? imageFile) async {
+    // ບໍ່ມີຮູບສົ່ງມາ
+    if (imageFile == null) {
+      FormData DataAddUser = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+      });
+
+      final response = await dio().post('/register',
+          data: DataAddUser,
+          options: Options(validateStatus: ((status) => true)));
+
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        if (response.data['success']) {
+          loginMessage = response.data['message'];
+          AdminPage = 0;
+          notifyListeners();
+          return true;
+        } else {
+          loginMessage = response.data['message'];
+          notifyListeners();
+          return false;
+        }
+      }
+    } else {
+      // ມີຮູບພາບສົ່ງມານຳ
+
+      String filename = imageFile.path.split('/').last;
+
+      FormData DataAddUser = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+        'image': await MultipartFile.fromFile(
+          imageFile.path,
+          filename: filename,
+        )
+      });
+
+      final response = await dio().post('/register',
+          data: DataAddUser,
+          options: Options(validateStatus: ((status) => true)));
+
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        if (response.data['success']) {
+          loginMessage = response.data['message'];
+          AdminPage = 0;
+          notifyListeners();
+          return true;
+        } else {
+          loginMessage = response.data['message'];
+          notifyListeners();
+          return false;
+        }
+      }
+    }
 
     // final prefs = await SharedPreferences.getInstance();
     // String? token = await prefs.getString('token');
@@ -105,24 +174,7 @@ class AppProvider extends ChangeNotifier {
     //       "Authorization": "Bearer $NewToken",
     //     }, validateStatus: ((status) => true)));
 
-    final response = await dio().post('/register',
-        data: DataAddUser,
-        options: Options(validateStatus: ((status) => true)));
-
-    print(response.data);
-
-    if (response.statusCode == 200) {
-      if (response.data['success']) {
-        loginMessage = response.data['message'];
-        AdminPage = 0;
-        notifyListeners();
-        return true;
-      } else {
-        loginMessage = response.data['message'];
-        notifyListeners();
-        return false;
-      }
-    }
+    // print(response.data);
 
     return false;
   }
@@ -143,6 +195,7 @@ class AppProvider extends ChangeNotifier {
     String web,
     String job,
     String job_type,
+    File? imageFile,
   ) async {
     FormData DataUpdateUser = FormData.fromMap({
       'name': name,
@@ -185,6 +238,29 @@ class AppProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> RemoveUser(int UserID) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = await prefs.getString('token');
+    var Token1 = token!.replaceAll('\n', '');
+    var NewToken = Token1.replaceAll('\r', '');
+
+    final response = await dio().delete('/delete_user/${UserID}',
+        options: Options(headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Authorization": "Bearer $NewToken",
+        }, validateStatus: ((status) => true)));
+
+    print(response.data);
+
+    if (response.statusCode == 200) {
+      SetAdminPage(0);
+      GetAllUser();
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
   void GetAllUser() async {
     final prefs = await SharedPreferences.getInstance();
     String? token = await prefs.getString('token');
@@ -223,7 +299,11 @@ class AppProvider extends ChangeNotifier {
         AddListUser(_listUser);
       }
 
-      ListUserSearch = ListUser;
+      ListUserSearch = await ListUser;
+
+      /// ສະແດງໜ້າ ຂໍ້ມູນ
+      isLoggin = true;
+      ChLoggined = true;
       notifyListeners();
     }
   }
@@ -265,7 +345,7 @@ class AppProvider extends ChangeNotifier {
       GetAllUser();
       CheckLoggin(token: token);
       // ກຳນົດໃຫ້ເຂົ້າສູ່ລະບົບ
-      isLoggin = true;
+      // isLoggin = true;
       notifyListeners();
       return true;
     }
