@@ -1,3 +1,4 @@
+import 'package:app_contacts_online/utils/ServiceSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../service/AppProvider.dart';
@@ -159,11 +160,17 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
                       onSelected: (SampleItem item) {
                         print(item);
                       },
-                      child: CircleAvatar(
-                        maxRadius: 26,
-                        backgroundImage: NetworkImage(
-                            'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
-                      ),
+                      child: (UserData.image == '')
+                          ? CircleAvatar(
+                              maxRadius: 26,
+                              backgroundImage: NetworkImage(
+                                  'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
+                            )
+                          : CircleAvatar(
+                              maxRadius: 26,
+                              backgroundImage: NetworkImage(
+                                  BaseURL + '/img/' + UserData.image),
+                            ),
                       itemBuilder: (BuildContext context) =>
                           <PopupMenuEntry<SampleItem>>[
                         PopupMenuItem<SampleItem>(
@@ -381,10 +388,17 @@ class _UserInfoState extends State<UserInfo> with TickerProviderStateMixin {
             Positioned(
                 top: 20,
                 left: 40,
-                child: CircleAvatar(
-                  maxRadius: 55,
-                  child: Text('Icon'),
-                ))
+                child: (UserData.image == '')
+                    ? CircleAvatar(
+                        maxRadius: 55,
+                        backgroundImage: NetworkImage(
+                            'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
+                      )
+                    : CircleAvatar(
+                        maxRadius: 55,
+                        backgroundImage:
+                            NetworkImage(BaseURL + '/img/' + UserData.image),
+                      ))
           ],
         ),
       );

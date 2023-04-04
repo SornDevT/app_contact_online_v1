@@ -1,7 +1,9 @@
 import 'package:app_contacts_online/service/AppProvider.dart';
+import 'package:app_contacts_online/utils/ServiceSetting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'FormAdd.dart';
 import 'UserInfo.dart';
 
 class ListContact extends StatefulWidget {
@@ -50,11 +52,17 @@ class _ListContactState extends State<ListContact> {
                       offset: const Offset(0, 60),
                       initialValue: selecteMenu,
                       onSelected: (value) {},
-                      child: CircleAvatar(
-                        maxRadius: 26,
-                        backgroundImage: NetworkImage(
-                            'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
-                      ),
+                      child: (Auth.user_login.image == '')
+                          ? CircleAvatar(
+                              maxRadius: 26,
+                              backgroundImage: NetworkImage(
+                                  'https://cdn-icons-png.flaticon.com/512/219/219986.png'),
+                            )
+                          : CircleAvatar(
+                              maxRadius: 26,
+                              backgroundImage: NetworkImage(
+                                  BaseURL + '/img/' + Auth.user_login.image),
+                            ),
                       itemBuilder: (BuildContext context) =>
                           <PopupMenuEntry<SampleItem>>[
                         PopupMenuItem<SampleItem>(
@@ -89,21 +97,32 @@ class _ListContactState extends State<ListContact> {
                           ),
                         ),
                         PopupMenuItem<SampleItem>(
-                          child: Row(
-                            children: const [
-                              Icon(
-                                Icons.edit,
-                                color: Color.fromARGB(255, 238, 43, 153),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                'ແກ້ໄຂ',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 238, 43, 153)),
-                              ),
-                            ],
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FormAdd(
+                                            UserID: Auth.user_login.id,
+                                            reg: false,
+                                          )));
+                            },
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.edit,
+                                  color: Color.fromARGB(255, 238, 43, 153),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'ແກ້ໄຂ',
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 238, 43, 153)),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         PopupMenuItem<SampleItem>(

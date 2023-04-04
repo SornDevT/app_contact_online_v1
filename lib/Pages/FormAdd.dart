@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../model/User.dart';
 import '../service/AppProvider.dart';
 import 'package:image_picker/image_picker.dart';
+import '../utils/ServiceSetting.dart';
 
 class FormAdd extends StatefulWidget {
   const FormAdd({Key? key, required this.UserID, required this.reg})
@@ -115,16 +116,34 @@ class _FormAddState extends State<FormAdd> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         imageFilePath == null
-                            ? CircleAvatar(
-                                child: Icon(
-                                  Icons.account_circle,
-                                  size: 120,
-                                  color: Colors.white,
-                                ),
-                                maxRadius: 65,
-                                backgroundColor:
-                                    Color.fromARGB(255, 238, 43, 153),
-                              )
+                            ? (widget.UserID == 0)
+                                ? CircleAvatar(
+                                    child: Icon(
+                                      Icons.account_circle,
+                                      size: 120,
+                                      color: Colors.white,
+                                    ),
+                                    maxRadius: 65,
+                                    backgroundColor:
+                                        Color.fromARGB(255, 238, 43, 153),
+                                  )
+                                : (UserData.image == '')
+                                    ? CircleAvatar(
+                                        child: Icon(
+                                          Icons.account_circle,
+                                          size: 120,
+                                          color: Colors.white,
+                                        ),
+                                        maxRadius: 65,
+                                        backgroundColor:
+                                            Color.fromARGB(255, 238, 43, 153),
+                                      )
+                                    : CircleAvatar(
+                                        // child: Text(UserData.image.toString()),
+                                        backgroundImage: NetworkImage(
+                                            BaseURL + '/img/' + UserData.image),
+                                        maxRadius: 65,
+                                      )
                             : CircleAvatar(
                                 backgroundImage: FileImage(imageFile!),
                                 maxRadius: 65,

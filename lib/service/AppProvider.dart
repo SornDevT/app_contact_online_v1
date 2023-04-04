@@ -197,42 +197,91 @@ class AppProvider extends ChangeNotifier {
     String job_type,
     File? imageFile,
   ) async {
-    FormData DataUpdateUser = FormData.fromMap({
-      'name': name,
-      'last_name': last_name,
-      'gender': gender,
-      'tel': tel,
-      'password': password,
-      'birth_day': birth_day,
-      'add_village': add_village,
-      'add_city': add_city,
-      'add_province': add_province,
-      'add_detail': add_detail,
-      'email': email,
-      'web': web,
-      'job': job,
-      'job_type': job_type,
-    });
+    // ອັບເດດຂໍ້ມູນ ບໍ່ມີຮູບພາບສົ່ງມາ
+    if (imageFile == null) {
+      FormData DataUpdateUser = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+      });
 
-    final prefs = await SharedPreferences.getInstance();
-    String? token = await prefs.getString('token');
-    var Token1 = token!.replaceAll('\n', '');
-    var NewToken = Token1.replaceAll('\r', '');
+      final prefs = await SharedPreferences.getInstance();
+      String? token = await prefs.getString('token');
+      var Token1 = token!.replaceAll('\n', '');
+      var NewToken = Token1.replaceAll('\r', '');
 
-    final response = await dio().post('/update_user/${UserID}',
-        data: DataUpdateUser,
-        options: Options(headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          "Authorization": "Bearer $NewToken",
-        }, validateStatus: ((status) => true)));
-    // ອັບເດດຂໍ້ມູນ ຜູ້ໃຊ້ Login
-    CheckLoggin(token: token);
+      final response = await dio().post('/update_user/${UserID}',
+          data: DataUpdateUser,
+          options: Options(headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer $NewToken",
+          }, validateStatus: ((status) => true)));
+      // ອັບເດດຂໍ້ມູນ ຜູ້ໃຊ້ Login
+      CheckLoggin(token: token);
 
-    if (response.statusCode == 200) {
-      SetAdminPage(0);
-      GetAllUser();
-      notifyListeners();
-      return true;
+      if (response.statusCode == 200) {
+        SetAdminPage(0);
+        GetAllUser();
+        notifyListeners();
+        return true;
+      }
+    } else {
+      /// ອັບເດດຂໍ້ມູນ ພ້ອມຮູບພາບ
+
+      String filename = imageFile.path.split('/').last;
+
+      FormData DataUpdateUser = FormData.fromMap({
+        'name': name,
+        'last_name': last_name,
+        'gender': gender,
+        'tel': tel,
+        'password': password,
+        'birth_day': birth_day,
+        'add_village': add_village,
+        'add_city': add_city,
+        'add_province': add_province,
+        'add_detail': add_detail,
+        'email': email,
+        'web': web,
+        'job': job,
+        'job_type': job_type,
+        'image': await MultipartFile.fromFile(
+          imageFile.path,
+          filename: filename,
+        )
+      });
+
+      final prefs = await SharedPreferences.getInstance();
+      String? token = await prefs.getString('token');
+      var Token1 = token!.replaceAll('\n', '');
+      var NewToken = Token1.replaceAll('\r', '');
+
+      final response = await dio().post('/update_user/${UserID}',
+          data: DataUpdateUser,
+          options: Options(headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer $NewToken",
+          }, validateStatus: ((status) => true)));
+      // ອັບເດດຂໍ້ມູນ ຜູ້ໃຊ້ Login
+      CheckLoggin(token: token);
+
+      if (response.statusCode == 200) {
+        SetAdminPage(0);
+        GetAllUser();
+        notifyListeners();
+        return true;
+      }
     }
 
     return false;
